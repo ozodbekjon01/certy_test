@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Imtihon Natijasi</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .result-container {
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #3b82f6;
+            font-size: 28px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 8px solid #334155;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .score-circle.pass {
+            border-color: #10b981;
+        }
+
+        .score-circle.fail {
+            border-color: #ef4444;
+        }
+
+        .percentage {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .percentage-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .correct { color: #10b981; }
+        .wrong { color: #ef4444; }
+
+        .btn-dashboard {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-dashboard:hover {
+            background: #2563eb;
+        }
+
+        .feedback-text {
+            font-size: 16px;
+            color: #cbd5e1;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="result-container">
+    <h1>Imtihon Yakunlandi</h1>
+    <p style="color: #94a3b8;">{{ result.test_name }}</p>
+
+    {% set is_pass = result.percentage >= 70.0 %}
+    <div class="score-circle {{ 'pass' if is_pass else 'fail' }}">
+        <span class="percentage">{{ result.percentage }}%</span>
+        <span class="percentage-label">{{ 'O\'tdi' if is_pass else 'Yiqildi' }}</span>
+    </div>
+
+    <p class="feedback-text">
+        {% if is_pass %}
+            Tabriklaymiz! Siz imtihondan muvaffaqiyatli o'tdingiz. IC3 GS6 sertifikatini olishga tayyorsiz!
+        {% else %}
+            Afsuski, o'tish ballini (70%) to'play olmadingiz. Mavzularni qayta o'qib chiqib, yana urinib ko'ring!
+        {% endif %}
+    </p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-val correct">{{ result.correct }}</div>
+            <div class="stat-label">To'g'ri Javoblar</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val wrong">{{ result.wrong }}</div>
+            <div class="stat-label">Noto'g'ri Javoblar</div>
+        </div>
+    </div>
+
+    <a href="/dashboard" class="btn-dashboard">Dashboardga qaytish</a>
+</div>
+
+</body>
+</html>

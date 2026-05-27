@@ -1,0 +1,218 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Add Questions{% endblock %}
+
+{% block content %}
+
+<h2>Savol qo'shish</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="test_id" value="{{ test_id }}">
+
+    <!-- QUESTION TYPE -->
+    <div class="form-group">
+        <label>Savol Turi</label>
+        <select name="question_type" id="question_type" required>
+            <option value="">-- Tanlang --</option>
+            <option value="single_choice">Yagona Tanlovli</option>
+            <option value="multiple_choice">Ko'p Tanlovli</option>
+            <option value="matching">Moslashtirish</option>
+            <option value="true_false">True / False (IC3 Statements)</option>
+        </select>
+    </div>
+
+    <!-- QUESTION TEXT -->
+    <div class="form-group">
+        <label>Savol Matni</label>
+        <textarea name="question_text" rows="4" required></textarea>
+    </div>
+
+    <!-- QUESTION IMAGE -->
+    <div class="form-group">
+        <label>Savol Rasmi</label>
+        <input type="file" name="question_image">
+    </div>
+
+    <hr>
+
+    <h3>Variantlar / Statements</h3>
+
+    <div id="options_container"></div>
+
+    <button type="button" class="btn" id="add-opt-btn" onclick="addOption()">
+        Variant qo‘shish
+    </button>
+
+    <br><br>
+    <button type="submit" class="btn btn-success">
+        Saqlash
+    </button>
+</form>
+
+<script>
+
+const questionType = document.getElementById("question_type");
+const optionsContainer = document.getElementById("options_container");
+const addBtn = document.getElementById("add-opt-btn");
+
+// =========================
+// TYPE CHANGE
+// =========================
+questionType.addEventListener("change", function () {
+
+    optionsContainer.innerHTML = "";
+    document.querySelectorAll(".single-hidden").forEach(e => e.remove());
+
+    const type = this.value;
+    if (!type) return;
+
+    addOption();
+    addOption();
+});
+
+// =========================
+// ADD OPTION
+// =========================
+function addOption(preFill = "") {
+
+    const type = questionType.value;
+    if (!type) {
+        alert("Avval savol turini tanlang!");
+        return;
+    }
+
+    const index = optionsContainer.children.length;
+
+    const div = document.createElement("div");
+    div.classList.add("option-item");
+
+    div.style.border = "1px solid #ddd";
+    div.style.padding = "12px";
+    div.style.marginBottom = "10px";
+    div.style.borderRadius = "8px";
+
+    let correctHTML = "";
+
+    // =========================
+    // SINGLE CHOICE (RADIO)
+    // =========================
+    if (type === "single_choice") {
+
+        correctHTML = `
+            <label>
+                <input type="radio" name="correct_radio" value="${index}" required>
+                To‘g‘ri javob
+            </label>
+        `;
+    }
+
+    // =========================
+    // MULTIPLE CHOICE
+    // =========================
+    else if (type === "multiple_choice") {
+
+        correctHTML = `
+            <label>
+                <input type="checkbox" name="correct_answers[]" value="${index}">
+                To‘g‘ri javob
+            </label>
+        `;
+    }
+
+    // =========================
+    // TRUE / FALSE (IC3 STYLE)
+    // =========================
+    else if (type === "true_false") {
+
+        correctHTML = `
+            <label>
+                <input type="checkbox" name="correct_answers[]" value="${index}">
+                TRUE (agar statement to‘g‘ri bo‘lsa belgilang)
+            </label>
+        `;
+    }
+
+    // =========================
+    // MATCHING
+    // =========================
+    else if (type === "matching") {
+
+        correctHTML = `
+            <label>Mos javob:</label>
+            <input type="text" name="appropriate[]" placeholder="Juftini kiriting" required>
+        `;
+    }
+
+    div.innerHTML = `
+        <div style="display:flex; justify-content:space-between;">
+            <b>Variant #${index + 1}</b>
+            <button type="button" onclick="removeOption(this)">❌</button>
+        </div>
+
+        <input type="text"
+               name="options[]"
+               value="${preFill}"
+               placeholder="Matn kiriting"
+               required>
+
+        <input type="file" name="option_images[]">
+
+        <div style="margin-top:8px;">
+            ${correctHTML}
+        </div>
+    `;
+
+    optionsContainer.appendChild(div);
+
+    // =========================
+    // SINGLE CHOICE FIX
+    // =========================
+    if (type === "single_choice") {
+
+        const radio = div.querySelector("input[type=radio]");
+
+        radio.addEventListener("change", function () {
+
+            document.querySelectorAll(".single-hidden").forEach(e => e.remove());
+
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "correct_answers[]";
+            hidden.value = this.value;
+            hidden.classList.add("single-hidden");
+
+            document.querySelector("form").appendChild(hidden);
+        });
+    }
+}
+
+// =========================
+// REMOVE OPTION
+// =========================
+function removeOption(btn) {
+    btn.closest(".option-item").remove();
+    reindex();
+}
+
+// =========================
+// REINDEX
+// =========================
+function reindex() {
+
+    const items = optionsContainer.querySelectorAll(".option-item");
+
+    items.forEach((item, i) => {
+
+        item.querySelector("b").innerText = `Variant #${i + 1}`;
+
+        const radio = item.querySelector("input[type=radio]");
+        if (radio) radio.value = i;
+
+        const checkbox = item.querySelector("input[type=checkbox]");
+        if (checkbox) checkbox.value = i;
+    });
+}
+
+</script>
+
+{% endblock %}

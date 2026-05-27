@@ -1,0 +1,29 @@
+{%
+    extends "admin/admin_base.html" %}
+{% block title %}Manage Offers{% endblock %}
+{% block content %}
+    <h3>Manage Offers</h3>
+    <a href="/admin/offers/create">Create New Offer</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>name</th>
+                <th>Time</th>
+                <th>Price</th>
+                <th>Discount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for offer in offers %}
+            <tr>
+                <td>{{ offer[0] }}</td>
+                <td>{{ offer[1] }}</td>
+                <td>{{ offer[2] }}</td>
+                <td>{{ offer[3] }}</td>
+                <td>{{ offer[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

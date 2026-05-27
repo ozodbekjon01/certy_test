@@ -1,0 +1,23 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Statistika{% endblock %}
+{% block content %}
+    <h3>Tizim Statistikasi</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Jami Foydalanuvchilar</h4>
+            <p>{{ user_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>Jami Tariflar</h4>
+            <p>{{ offer_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>Faol Shartnomalar</h4>
+            <p>{{ contract_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>Jami Testlar</h4>
+            <p>{{ test_count }}</p>
+        </div>
+    </div>
+{% endblock %}
