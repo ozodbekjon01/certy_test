@@ -1,0 +1,157 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}View Questions{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .question-card {
+        background: #2434eb;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        border-left: 5px solid #4f46e5;
+        transition: 0.2s;
+    }
+
+    .question-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .question-text {
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .badge {
+        background: #d0d5e9;
+        color: #4f46e5;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .top-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.2s;
+    }
+
+    .btn-edit {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #d97706;
+    }
+
+    .btn-delete {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #dc2626;
+    }
+
+    .options {
+        margin-top: 12px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .option-item {
+        background: #10bd10;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+    }
+
+    .correct {
+        background: #c0d618 !important;
+        border: 1px solid #22c55e;
+    }
+
+    .question-image {
+        margin-top: 10px;
+        max-width: 220px;
+        border-radius: 10px;
+    }
+</style>
+
+<h3 class="page-title">View Questions for {{ test[1] }}</h3>
+<a href="{{ url_for('admin.add_questions', test_id=test[0]) }}">
+                        Add Questions
+                    </a>
+
+{% for question in questions %}
+    <div class="question-card">
+
+        <div class="question-header">
+
+            <div>
+                <div class="question-text">{{ question.question }}</div>
+                <div class="badge">{{ question.type }}</div>
+            </div>
+
+            <div class="top-actions">
+                
+
+                <!-- DELETE BUTTON (ixtiyoriy) -->
+                <a class="btn btn-delete"
+                   href="/admin/questions/{{ question.id }}/delete">
+                    Delete
+                </a>
+            </div>
+
+        </div>
+
+        {% if question.image %}
+            <img class="question-image" src="{{ question.image }}">
+        {% endif %}
+
+        <ul class="options">
+            {% for option in question.options %}
+                <li class="option-item {% if option[2] in [1, '1', True] %}correct{% endif %}">
+                    {{ option[0] }}
+
+                    {% if option[1] %}
+                        <br><img src="{{ option[1] }}" width="80">
+                    {% endif %}
+
+                    {% if option[2] in [1, '1', True] %}
+                        <strong>(Correct)</strong>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+    </div>
+{% endfor %}
+
+{% endblock %}

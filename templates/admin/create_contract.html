@@ -1,0 +1,27 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Create Contract{% endblock %}
+{% block content %}
+    <h3>Create New Contract</h3>
+    <form method="POST">
+        <div>
+            <label for="user_id">Select User:</label>
+            <select id="user_id" name="user_id" required>
+                <option value="">-- Select User --</option>
+                {% for user in users %}
+                    <option value="{{ user[0] }}">{{ user[1] }} ({{ user[2] }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="offer_id">Select Offer/Tariff:</label>
+            <select id="offer_id" name="offer_id" required>
+                <option value="">-- Select Offer --</option>
+                {% for offer in offers %}
+                    <option value="{{ offer[0] }}">{{ offer[1] }} - {{ offer[3] }} sum</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <button type="submit">Create Contract</button>
+    </form>
+{% endblock %}

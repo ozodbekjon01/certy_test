@@ -1,0 +1,27 @@
+{%
+    extends "admin/admin_base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+    <h3>Manage Users</h3>
+    <a href="/admin/users/create">Create New User</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td>{{ user[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

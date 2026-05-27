@@ -1,0 +1,27 @@
+{%
+    extends "admin/admin_base.html" %}
+{% block title %}Manage Contracts{% endblock %}
+{% block content %}
+    <h3>Manage Contracts</h3>
+    <a href="/admin/contracts/create">Create New Contract</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Offer Name</th>
+                <th>Username</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contract in contracts %}
+            <tr>
+                <td>{{ contract[0] }}</td>
+                <td>{{ contract[1] }}</td>
+                <td>{{ contract[2] }}</td>
+                <td>{{ contract[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

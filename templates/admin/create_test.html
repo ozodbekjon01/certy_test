@@ -1,0 +1,25 @@
+{%
+    extends "admin/admin_base.html" %}
+{% block title %}Create Test{% endblock %}
+{% block content %}
+    <h3>Create Test</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="name">Test Name:</label>
+            <input type="text" id="name" name="name" value="{{ test[1] if test else '' }}" required>
+        </div>
+        <div>
+            <label for="bio">Test bio:</label>
+            <textarea id="bio" name="bio">{{ test[2] if test else '' }}</textarea>
+        </div>
+        <div>
+            <label for="image_location">Image:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            {% if test and test[3] %}
+                <p>Current Image:</p>
+                <img src="../../{{ test[3] }}" alt="Test Image" width="150">
+            {% endif %}
+        </div>
+        <button type="submit">Create Test</button>
+    </form>
+{% endblock %}
