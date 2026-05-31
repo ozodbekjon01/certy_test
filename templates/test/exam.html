@@ -858,6 +858,7 @@ function renderOptions(options, savedAnswer){
 
                     });
 
+                refreshMatchingSelects();
                 submitAnswer(answers);
 
             };
@@ -869,7 +870,35 @@ function renderOptions(options, savedAnswer){
 
         });
 
+        refreshMatchingSelects();
+
     }
+
+}
+
+// =========================
+// MATCHING: tanlangan javoblarni boshqa selectlarda disable qilish
+// =========================
+
+function refreshMatchingSelects(){
+
+    let selects = document.querySelectorAll(".matching-select");
+
+    let chosen = [];
+    selects.forEach(s => { if(s.value) chosen.push(s.value); });
+
+    selects.forEach(sel => {
+
+        Array.from(sel.options).forEach(opt => {
+
+            if(opt.value === "") return;
+
+            // boshqa selectda tanlangan bo'lsa disable
+            opt.disabled = chosen.includes(opt.value) && sel.value !== opt.value;
+
+        });
+
+    });
 
 }
 
