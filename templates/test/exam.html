@@ -623,6 +623,13 @@ function renderOptions(options, savedAnswer){
             div.appendChild(input);
             div.appendChild(text);
 
+            if(opt.image){
+                let oimg = document.createElement("img");
+                oimg.src = "/" + opt.image;
+                oimg.className = "option-image";
+                div.appendChild(oimg);
+            }
+
             container.appendChild(div);
 
         });
@@ -773,6 +780,13 @@ function renderOptions(options, savedAnswer){
 
             div.appendChild(input);
             div.appendChild(text);
+
+            if(opt.image){
+                let oimg = document.createElement("img");
+                oimg.src = "/" + opt.image;
+                oimg.className = "option-image";
+                div.appendChild(oimg);
+            }
 
             container.appendChild(div);
 
