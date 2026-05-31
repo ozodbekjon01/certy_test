@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kirish — IC3 GS6</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>try { Telegram.WebApp.expand(); Telegram.WebApp.requestFullscreen && Telegram.WebApp.requestFullscreen(); } catch(e) {}</script>
+    <script src="https://telegram.org/js/telegram-web-app.js" onload="
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        const enableFS = () => {
+            if(window.Telegram.WebApp.requestFullscreen) window.Telegram.WebApp.requestFullscreen();
+            document.removeEventListener('click', enableFS);
+            document.removeEventListener('touchstart', enableFS);
+        };
+        document.addEventListener('click', enableFS);
+        document.addEventListener('touchstart', enableFS);
+    "></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
