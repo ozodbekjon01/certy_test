@@ -286,6 +286,46 @@
             font-size:15px;
         }
 
+        /* CUSTOM MATCHING DROPDOWN */
+        .match-dd{
+            position:relative;
+            width:100%;
+        }
+        .match-dd-toggle{
+            background:#0f172a;
+            color:white;
+            border:1px solid #475569;
+            border-radius:8px;
+            padding:12px;
+            font-size:15px;
+            cursor:pointer;
+            user-select:none;
+        }
+        .match-dd-toggle:hover{ border-color:#3b82f6; }
+        .match-dd-menu{
+            display:none;
+            position:absolute;
+            top:calc(100% + 4px);
+            left:0;
+            right:0;
+            background:#1e293b;
+            border:1px solid #475569;
+            border-radius:8px;
+            max-height:240px;
+            overflow-y:auto;
+            z-index:100;
+            box-shadow:0 8px 20px rgba(0,0,0,.4);
+        }
+        .match-dd-menu.open{ display:block; }
+        .match-dd-item{
+            padding:12px;
+            font-size:15px;
+            cursor:pointer;
+            border-bottom:1px solid #334155;
+        }
+        .match-dd-item:last-child{ border-bottom:none; }
+        .match-dd-item:hover{ background:#3b82f6; }
+
         /* ACTIONS */
 
         .bottom-actions{
@@ -801,73 +841,65 @@ function renderOptions(options, savedAnswer){
         options.forEach(opt => {
 
             let row = document.createElement("div");
-
             row.className = "matching-row";
 
             let left = document.createElement("div");
-
             left.className = "option-text";
             left.innerText = opt.option_text;
 
-            let select = document.createElement("select");
+            // CUSTOM DROPDOWN (native select webview da ishlamaydi)
+            let dd = document.createElement("div");
+            dd.className = "match-dd";
+            dd.dataset.optionId = opt.id;
+            dd.dataset.value = "";
 
-            select.className = "matching-select";
+            let toggle = document.createElement("div");
+            toggle.className = "match-dd-toggle";
+            toggle.innerText = "-- Tanlang --";
 
-            select.dataset.optionId = opt.id;
-
-            let defaultOpt = document.createElement("option");
-
-            defaultOpt.value = "";
-            defaultOpt.innerText = "-- Tanlang --";
-
-            select.appendChild(defaultOpt);
+            let menu = document.createElement("div");
+            menu.className = "match-dd-menu";
 
             opt.right_side_options.forEach(val => {
-
-                let option = document.createElement("option");
-
-                option.value = val;
-                option.innerText = val;
-
-                if(
-                    savedAnswer &&
-                    savedAnswer[String(opt.id)] === val
-                ){
-                    option.selected = true;
-                }
-
-                select.appendChild(option);
-
+                let item = document.createElement("div");
+                item.className = "match-dd-item";
+                item.dataset.value = val;
+                item.innerText = val;
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    dd.dataset.value = val;
+                    toggle.innerText = val;
+                    menu.classList.remove("open");
+                    refreshMatchingSelects();
+                    submitMatching();
+                };
+                menu.appendChild(item);
             });
 
-            select.onchange = () => {
+            if(savedAnswer && savedAnswer[String(opt.id)]){
+                dd.dataset.value = savedAnswer[String(opt.id)];
+                toggle.innerText = savedAnswer[String(opt.id)];
+            }
 
-                let answers = {};
-
-                document
-                    .querySelectorAll(".matching-select")
-                    .forEach(sel => {
-
-                        if(sel.value){
-
-                            answers[
-                                sel.dataset.optionId
-                            ] = sel.value;
-
-                        }
-
-                    });
-
-                refreshMatchingSelects();
-                submitAnswer(answers);
-
+            toggle.onclick = (e) => {
+                e.stopPropagation();
+                let wasOpen = menu.classList.contains("open");
+                document.querySelectorAll(".match-dd-menu.open").forEach(m => m.classList.remove("open"));
+                if(!wasOpen) menu.classList.add("open");
             };
 
-            row.appendChild(left);
-            row.appendChild(select);
+            dd.appendChild(toggle);
+            dd.appendChild(menu);
 
+            row.appendChild(left);
+            row.appendChild(dd);
             container.appendChild(row);
 
+        });
+
+        // tashqariga bosilganda menyularni yopish
+        document.addEventListener("click", () => {
+            document.querySelectorAll(".match-dd-menu.open").forEach(m => m.classList.remove("open"));
         });
 
         refreshMatchingSelects();
@@ -877,27 +909,37 @@ function renderOptions(options, savedAnswer){
 }
 
 // =========================
-// MATCHING: tanlangan javoblarni boshqa selectlarda disable qilish
+// MATCHING: javoblarni yig'ish va yuborish
+// =========================
+
+function submitMatching(){
+    let answers = {};
+    document.querySelectorAll(".match-dd").forEach(dd => {
+        if(dd.dataset.value){
+            answers[dd.dataset.optionId] = dd.dataset.value;
+        }
+    });
+    submitAnswer(answers);
+}
+
+// =========================
+// MATCHING: tanlangan javoblarni boshqa dropdownlarda yashirish
 // =========================
 
 function refreshMatchingSelects(){
 
-    let selects = document.querySelectorAll(".matching-select");
+    let dds = document.querySelectorAll(".match-dd");
 
     let chosen = [];
-    selects.forEach(s => { if(s.value) chosen.push(s.value); });
+    dds.forEach(d => { if(d.dataset.value) chosen.push(d.dataset.value); });
 
-    selects.forEach(sel => {
-
-        Array.from(sel.options).forEach(opt => {
-
-            if(opt.value === "") return;
-
-            // boshqa selectda tanlangan bo'lsa disable
-            opt.disabled = chosen.includes(opt.value) && sel.value !== opt.value;
-
+    dds.forEach(dd => {
+        let myVal = dd.dataset.value;
+        dd.querySelectorAll(".match-dd-item").forEach(item => {
+            let v = item.dataset.value;
+            let taken = chosen.includes(v) && v !== myVal;
+            item.style.display = taken ? "none" : "block";
         });
-
     });
 
 }
@@ -1012,25 +1054,27 @@ async function checkAnswer(){
     else if(qType === "matching"){
 
         document
-            .querySelectorAll(".matching-select")
-            .forEach(select => {
+            .querySelectorAll(".match-dd")
+            .forEach(dd => {
 
                 let optionId =
-                    parseInt(select.dataset.optionId);
+                    parseInt(dd.dataset.optionId);
 
                 let correct =
                     data.correct_options.find(
                         x => x.id === optionId
                     );
 
-                if(select.value === correct.appropriate){
+                let toggle = dd.querySelector(".match-dd-toggle");
 
-                    select.style.border =
+                if(correct && dd.dataset.value === correct.appropriate){
+
+                    toggle.style.border =
                         "2px solid #10b981";
 
                 }else{
 
-                    select.style.border =
+                    toggle.style.border =
                         "2px solid #ef4444";
 
                 }
