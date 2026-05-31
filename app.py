@@ -1,4 +1,5 @@
 from flask import Flask, session, redirect
+from werkzeug.middleware.proxy_fix import ProxyFix
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ from routes import dashboard
 from routes import test
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "fallback-change-me")
 app.permanent_session_lifetime = timedelta(hours=5)
 
