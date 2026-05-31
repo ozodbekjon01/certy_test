@@ -15,6 +15,18 @@
         document.addEventListener('click', enableFS);
         document.addEventListener('touchstart', enableFS);
     "></script>
+    <script>
+        function tgFullscreen() {
+            try {
+                if (window.TelegramWebviewProxy) {
+                    window.TelegramWebviewProxy.postEvent('web_app_request_fullscreen', '{}');
+                } else if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.requestFullscreen && window.Telegram.WebApp.requestFullscreen();
+                }
+            } catch(e) {}
+        }
+        document.addEventListener('DOMContentLoaded', tgFullscreen);
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
