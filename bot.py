@@ -26,7 +26,7 @@ from werkzeug.security import generate_password_hash
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 DB_PATH = "database.db"
-SITE_URL = "https://ustoznext.uz"
+SITE_URL = os.environ.get("SITE_URL", "https://ustoznext.uz")
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
 ADMIN_ID = 6471394705
 CARD_NUMBER = "8600 1234 5678 9012"
@@ -53,7 +53,17 @@ dp = Dispatcher()
 # HELPERS
 # =========================
 
+def _cabinet_kb(url: str) -> InlineKeyboardMarkup:
+    if url.startswith("https://"):
+        btn = InlineKeyboardButton(text="🖥 Kabinetni ochish", web_app=WebAppInfo(url=url))
+    else:
+        btn = InlineKeyboardButton(text="🖥 Kabinetni ochish", url=url)
+    return InlineKeyboardMarkup(inline_keyboard=[[btn]])
+
 def _make_login_url(username: str) -> str:
+    ts = int(time.time())
+    token = hmac.new(SECRET_KEY.encode(), f"{username}:{ts}".encode(), hashlib.sha256).hexdigest()
+    return f"{SITE_URL}/auth/url_login/{username}?token={token}&ts={ts}"
     ts = int(time.time())
     token = hmac.new(SECRET_KEY.encode(), f"{username}:{ts}".encode(), hashlib.sha256).hexdigest()
     return f"{SITE_URL}/auth/url_login/{username}?token={token}&ts={ts}"
@@ -184,12 +194,12 @@ async def cb_open_cabinet(call: CallbackQuery):
         await call.answer("Avval ro'yxatdan o'ting!", show_alert=True)
         return
     url = _make_login_url(user[1])
+    cabinet_btn = _cabinet_kb(url).inline_keyboard[0][0]
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🖥 Kabinetni ochish", web_app=WebAppInfo(url=url))],
+        [cabinet_btn],
         [InlineKeyboardButton(text="🔙 Orqaga", callback_data="back_main")],
     ])
     await call.message.edit_text("🖥 Kabinetingizga kirish uchun tugmani bosing:", reply_markup=kb)
-    await call.answer()
 
 # =========================
 # OFFERS
