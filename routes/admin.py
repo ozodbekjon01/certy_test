@@ -128,10 +128,11 @@ def create_user():
         username = request.form.get("username")
         password = request.form.get("password")
         role = request.form.get("role")
+        tg_id = request.form.get("tg_id") or None
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
-            c.execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
-                      (username, generate_password_hash(password), role))
+            c.execute("INSERT INTO users (username, password_hash, role, tg_id) VALUES (?, ?, ?, ?)",
+                      (username, generate_password_hash(password), role, tg_id))
             conn.commit()
         return redirect("/admin/users")
     return render_template("admin/create_user.html")
