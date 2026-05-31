@@ -1,16 +1,15 @@
-{%
-    extends "admin/admin_base.html" %}
-{% block title %}Manage Tests{% endblock %}
+{% extends "admin/admin_base.html" %}
+{% block title %}Testlar{% endblock %}
 {% block content %}
-    <h3>Manage Tests</h3>
-    <a href="/admin/tests/create">Create New Test</a>
+    <h3>Testlar</h3>
+    <a href="/admin/tests/create" class="btn" style="margin-bottom:16px;display:inline-block;">+ Yangi Test</a>
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Image</th>
-                <th>amallar</th>
+                <th>Nomi</th>
+                <th>Rasm</th>
+                <th>Amallar</th>
             </tr>
         </thead>
         <tbody>
@@ -18,15 +17,18 @@
             <tr>
                 <td>{{ test[0] }}</td>
                 <td>{{ test[1] }}</td>
-                <td><img src="{{ test[3] }}" alt="Test Image" width="100"></td>
                 <td>
-                    <a href="/admin/tests/{{ test[0] }}/edit">Edit</a>
-                    <a href="/admin/tests/{{ test[0] }}/delete">Delete</a>
-                    <a href="{{ url_for('admin.add_questions', test_id=test[0]) }}">
-                        Add Questions
-                    </a>
-                    <a href="{{ url_for('admin.view_questions', test_id=test[0]) }}">
-                        View Questions
+                    {% if test[2] %}
+                        <img src="/{{ test[2] }}" alt="rasm" width="60" style="border-radius:4px;">
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="/admin/tests/{{ test[0] }}/edit" class="btn" style="padding:6px 12px;font-size:13px;">✏️ Tahrirlash</a>
+                    <a href="{{ url_for('admin.add_questions', test_id=test[0]) }}" class="btn" style="padding:6px 12px;font-size:13px;">➕ Savol qo'shish</a>
+                    <a href="{{ url_for('admin.view_questions', test_id=test[0]) }}" class="btn" style="padding:6px 12px;font-size:13px;">👁 Savollar</a>
+                    <a href="/admin/tests/{{ test[0] }}/delete" class="btn btn-danger" style="padding:6px 12px;font-size:13px;" onclick="return confirm('Testni o\'chirmoqchimisiz?')">🗑 O'chirish</a>
                 </td>
             </tr>
             {% endfor %}

@@ -2,73 +2,95 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Login - IC3 Platform</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirish — IC3 GS6</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial;
+            font-family: 'Segoe UI', sans-serif;
             background: #0f172a;
-            color: white;
+            color: #f1f5f9;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            padding: 20px;
         }
-
-        .box {
+        .card {
             background: #1e293b;
-            padding: 30px;
-            border-radius: 12px;
-            width: 320px;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 380px;
         }
-
+        .logo { text-align: center; margin-bottom: 28px; }
+        .logo-title { font-size: 26px; font-weight: 800; color: #3b82f6; }
+        .logo-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 7px; }
         input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 6px;
-            border: none;
+            width: 100%; padding: 11px 14px;
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 8px; color: #f1f5f9; font-size: 15px;
+            transition: border-color .2s;
         }
-
-        button {
-            width: 100%;
-            margin-top: 15px;
-            padding: 10px;
-            background: #3b82f6;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
+        input:focus { outline: none; border-color: #3b82f6; }
+        .btn-login {
+            width: 100%; padding: 12px;
+            background: #3b82f6; color: white;
+            border: none; border-radius: 8px;
+            font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: background .2s;
+            margin-top: 6px;
         }
-
+        .btn-login:hover { background: #2563eb; }
         .error {
-            color: red;
-            margin-top: 10px;
+            background: rgba(239,68,68,.1);
+            border: 1px solid rgba(239,68,68,.3);
+            color: #f87171;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 18px;
         }
+        .hint {
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .hint a { color: #3b82f6; text-decoration: none; }
     </style>
 </head>
-
 <body>
-
-<div class="box">
-
-    <h2>IC3 Login</h2>
-
-    <form method="POST">
-
-        <input type="text" name="username" placeholder="Username" required>
-
-        <input type="password" name="password" placeholder="Password" required>
-
-        <button type="submit">Login</button>
-
-    </form>
+<div class="card">
+    <div class="logo">
+        <div class="logo-title">IC3 GS6</div>
+        <div class="logo-sub">Test tayyorgarlik platformasi</div>
+    </div>
 
     {% if error %}
-        <div class="error">{{ error }}</div>
+    <div class="error">⚠️ {{ error }}</div>
     {% endif %}
 
-</div>
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Login</label>
+            <input type="text" id="username" name="username" placeholder="Loginni kiriting" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="password">Parol</label>
+            <input type="password" id="password" name="password" placeholder="Parolni kiriting" required>
+        </div>
+        <button type="submit" class="btn-login">Kirish →</button>
+    </form>
 
+    <div class="hint">
+        Hisobingiz yo'qmi?<br>
+        Telegram botdan ro'yxatdan o'ting
+    </div>
+</div>
 </body>
 </html>

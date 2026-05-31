@@ -138,9 +138,9 @@ def create_user():
 
 
 @bp.route("/tests/create", methods=["GET", "POST"])
-
 def create_test():
-    login_required()
+    check = login_required()
+    if check: return check
     if request.method == "POST":
         name = request.form.get("name")
         bio= request.form.get("bio")
@@ -178,7 +178,8 @@ def create_test():
 
 @bp.route("/tests/<int:test_id>/delete")
 def delete_test(test_id):
-    login_required()
+    check = login_required()
+    if check: return check
     with sqlite3.connect("database.db") as conn:
         c = conn.cursor()
         c.execute("DELETE FROM tests WHERE id = ?", (test_id,))
@@ -187,7 +188,8 @@ def delete_test(test_id):
 
 @bp.route("/tests/<int:test_id>/edit", methods=["GET", "POST"])
 def edit_test(test_id):
-    login_required()
+    check = login_required()
+    if check: return check
     with sqlite3.connect("database.db") as conn:
         c = conn.cursor()
         c.execute("SELECT id, name, bio, image_location FROM tests WHERE id = ?", (test_id,))
@@ -231,11 +233,12 @@ def edit_test(test_id):
 
 
 @bp.route(
-    "/admin/tests/<int:test_id>/add_questions",
+    "/tests/<int:test_id>/add_questions",
     methods=["GET", "POST"]
 )
 def add_questions(test_id):
-    login_required()
+    check = login_required()
+    if check: return check
     with sqlite3.connect("database.db") as conn:
 
         c = conn.cursor()
@@ -476,7 +479,7 @@ def add_questions(test_id):
     )
     
     
-@bp.route("/admin/tests/<int:test_id>/view_questions")
+@bp.route("/tests/<int:test_id>/view_questions")
 def view_questions(test_id):
     check = login_required()
     if check:
@@ -536,3 +539,36 @@ def delete_question(question_id):
         conn.commit()
 
     return redirect(request.referrer or "/admin/tests")
+
+
+@bp.route("/offers/<int:offer_id>/delete")
+def delete_offer(offer_id):
+    check = login_required()
+    if check: return check
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("DELETE FROM offers WHERE id = ?", (offer_id,))
+        conn.commit()
+    return redirect("/admin/offers")
+
+
+@bp.route("/contracts/<int:contract_id>/delete")
+def delete_contract(contract_id):
+    check = login_required()
+    if check: return check
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("DELETE FROM contracts WHERE id = ?", (contract_id,))
+        conn.commit()
+    return redirect("/admin/contracts")
+
+
+@bp.route("/users/<int:user_id>/delete")
+def delete_user(user_id):
+    check = login_required()
+    if check: return check
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        conn.commit()
+    return redirect("/admin/users")

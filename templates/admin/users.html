@@ -1,16 +1,16 @@
-{%
-    extends "admin/admin_base.html" %}
-{% block title %}Manage Users{% endblock %}
+{% extends "admin/admin_base.html" %}
+{% block title %}Foydalanuvchilar{% endblock %}
 {% block content %}
-    <h3>Manage Users</h3>
-    <a href="/admin/users/create">Create New User</a>
+    <h3>Foydalanuvchilar</h3>
+    <a href="/admin/users/create" class="btn" style="margin-bottom:16px;display:inline-block;">+ Yangi Foydalanuvchi</a>
     <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Username</th>
                 <th>Role</th>
-                <th>Created At</th>
+                <th>Yaratilgan</th>
+                <th>Amallar</th>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +20,9 @@
                 <td>{{ user[1] }}</td>
                 <td>{{ user[2] }}</td>
                 <td>{{ user[3] }}</td>
+                <td>
+                    <a href="/admin/users/{{ user[0] }}/delete" class="btn btn-danger" style="padding:6px 12px;font-size:13px;" onclick="return confirm('Foydalanuvchini o\'chirmoqchimisiz?')">🗑 O'chirish</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

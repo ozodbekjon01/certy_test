@@ -1,150 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
-    <title>Imtihon Natijasi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natija — IC3 GS6</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a; color: #f1f5f9;
             min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
         }
+        .card {
+            background: #1e293b; border: 1px solid #334155;
+            border-radius: 20px; padding: 40px 36px;
+            width: 100%; max-width: 480px; text-align: center;
+        }
+        .result-icon { font-size: 56px; margin-bottom: 12px; }
+        .result-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .test-name { font-size: 14px; color: #64748b; margin-bottom: 28px; }
 
-        .result-container {
-            background: #1e293b;
-            padding: 40px;
-            border-radius: 16px;
-            border: 1px solid #334155;
+        /* CIRCLE */
+        .circle-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 28px; }
+        .circle-wrap svg { transform: rotate(-90deg); }
+        .circle-bg { fill: none; stroke: #334155; stroke-width: 10; }
+        .circle-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset .8s ease; }
+        .circle-fill.pass { stroke: #10b981; }
+        .circle-fill.fail { stroke: #ef4444; }
+        .circle-text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+        .circle-pct { font-size: 28px; font-weight: 800; }
+        .circle-pct.pass { color: #10b981; }
+        .circle-pct.fail { color: #ef4444; }
+        .circle-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* IC3 THRESHOLD */
+        .threshold-bar-wrap { margin-bottom: 24px; }
+        .threshold-labels { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 6px; }
+        .threshold-bar { height: 8px; background: #334155; border-radius: 999px; position: relative; overflow: visible; }
+        .threshold-fill { height: 100%; border-radius: 999px; }
+        .threshold-fill.pass { background: #10b981; }
+        .threshold-fill.fail { background: #ef4444; }
+        .threshold-marker {
+            position: absolute; top: -4px; left: 70%;
+            width: 2px; height: 16px; background: #f59e0b;
+            border-radius: 2px;
+        }
+        .threshold-marker-label {
+            position: absolute; top: -20px; left: 70%;
+            transform: translateX(-50%);
+            font-size: 11px; color: #f59e0b; white-space: nowrap;
         }
 
-        h1 {
-            margin-top: 0;
-            color: #3b82f6;
-            font-size: 28px;
-        }
+        /* STATS */
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .stat { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 14px 10px; }
+        .stat-val { font-size: 22px; font-weight: 700; }
+        .stat-label { font-size: 12px; color: #64748b; margin-top: 3px; }
+        .stat.correct .stat-val { color: #10b981; }
+        .stat.wrong .stat-val { color: #ef4444; }
+        .stat.total .stat-val { color: #3b82f6; }
 
-        .score-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 8px solid #334155;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 30px auto;
-            position: relative;
+        /* FEEDBACK */
+        .feedback {
+            border-radius: 10px; padding: 14px 16px;
+            font-size: 14px; line-height: 1.6; margin-bottom: 24px; text-align: left;
         }
+        .feedback.pass { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2); color: #6ee7b7; }
+        .feedback.fail { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); color: #fca5a5; }
 
-        .score-circle.pass {
-            border-color: #10b981;
+        /* BUTTONS */
+        .btn-row { display: flex; gap: 10px; }
+        .btn {
+            flex: 1; padding: 12px; border-radius: 8px;
+            font-size: 14px; font-weight: 700; text-decoration: none;
+            text-align: center; transition: .2s; border: none; cursor: pointer;
         }
-
-        .score-circle.fail {
-            border-color: #ef4444;
-        }
-
-        .percentage {
-            font-size: 36px;
-            font-weight: bold;
-        }
-
-        .percentage-label {
-            font-size: 12px;
-            color: #94a3b8;
-            text-transform: uppercase;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        .stat-card {
-            background: #334155;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .stat-val {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: #94a3b8;
-        }
-
-        .correct { color: #10b981; }
-        .wrong { color: #ef4444; }
-
-        .btn-dashboard {
-            display: inline-block;
-            background: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-
-        .btn-dashboard:hover {
-            background: #2563eb;
-        }
-
-        .feedback-text {
-            font-size: 16px;
-            color: #cbd5e1;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #334155; color: #f1f5f9; }
+        .btn-secondary:hover { background: #475569; }
     </style>
 </head>
 <body>
-
-<div class="result-container">
-    <h1>Imtihon Yakunlandi</h1>
-    <p style="color: #94a3b8;">{{ result.test_name }}</p>
+<div class="card">
 
     {% set is_pass = result.percentage >= 70.0 %}
-    <div class="score-circle {{ 'pass' if is_pass else 'fail' }}">
-        <span class="percentage">{{ result.percentage }}%</span>
-        <span class="percentage-label">{{ 'O\'tdi' if is_pass else 'Yiqildi' }}</span>
+
+    <div class="result-icon">{{ "🎉" if is_pass else "📚" }}</div>
+    <div class="result-title">{{ "Tabriklaymiz!" if is_pass else "Qayta urinib ko'ring!" }}</div>
+    <div class="test-name">{{ result.test_name }}</div>
+
+    <!-- CIRCLE -->
+    <div class="circle-wrap">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle class="circle-bg" cx="70" cy="70" r="60"/>
+            {% set circ = 376.99 %}
+            {% set offset = circ - (result.percentage / 100 * circ) %}
+            <circle class="circle-fill {{ 'pass' if is_pass else 'fail' }}"
+                    cx="70" cy="70" r="60"
+                    stroke-dasharray="{{ circ }}"
+                    stroke-dashoffset="{{ offset }}"/>
+        </svg>
+        <div class="circle-text">
+            <div class="circle-pct {{ 'pass' if is_pass else 'fail' }}">{{ result.percentage }}%</div>
+            <div class="circle-label">{{ "O'tdi" if is_pass else "Yiqildi" }}</div>
+        </div>
     </div>
 
-    <p class="feedback-text">
+    <!-- THRESHOLD BAR -->
+    <div class="threshold-bar-wrap">
+        <div class="threshold-labels">
+            <span>0%</span>
+            <span>100%</span>
+        </div>
+        <div class="threshold-bar">
+            <div class="threshold-fill {{ 'pass' if is_pass else 'fail' }}" style="width: {{ result.percentage }}%"></div>
+            <div class="threshold-marker"></div>
+            <div class="threshold-marker-label">70% chegara</div>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat total">
+            <div class="stat-val">{{ result.total }}</div>
+            <div class="stat-label">Jami savol</div>
+        </div>
+        <div class="stat correct">
+            <div class="stat-val">{{ result.correct }}</div>
+            <div class="stat-label">To'g'ri</div>
+        </div>
+        <div class="stat wrong">
+            <div class="stat-val">{{ result.wrong }}</div>
+            <div class="stat-label">Noto'g'ri</div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="feedback {{ 'pass' if is_pass else 'fail' }}">
         {% if is_pass %}
-            Tabriklaymiz! Siz imtihondan muvaffaqiyatli o'tdingiz. IC3 GS6 sertifikatini olishga tayyorsiz!
+            ✅ Siz IC3 GS6 o'tish balini (70%) yig'dingiz! Sertifikat olishga tayyorsiz. Rasmiy imtihonga ro'yxatdan o'tishingiz mumkin.
         {% else %}
-            Afsuski, o'tish ballini (70%) to'play olmadingiz. Mavzularni qayta o'qib chiqib, yana urinib ko'ring!
+            ❌ O'tish bali 70% edi, siz {{ result.percentage }}% to'pladingiz. Zaif tomonlaringizni qayta o'rganing va yana urinib ko'ring — muvaffaqiyat siz bilan!
         {% endif %}
-    </p>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-val correct">{{ result.correct }}</div>
-            <div class="stat-label">To'g'ri Javoblar</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-val wrong">{{ result.wrong }}</div>
-            <div class="stat-label">Noto'g'ri Javoblar</div>
-        </div>
     </div>
 
-    <a href="/dashboard" class="btn-dashboard">Dashboardga qaytish</a>
-</div>
+    <!-- BUTTONS -->
+    <div class="btn-row">
+        <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+        <a href="/dashboard" class="btn btn-primary" onclick="history.back(); return false;">🔄 Qayta urinish</a>
+    </div>
 
+</div>
 </body>
 </html>

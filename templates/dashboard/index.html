@@ -1,147 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
-    <title>IC3 Analytics Dashboard</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IC3 GS6 — Dashboard</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f1f5f9; min-height: 100vh; }
 
-        .container {
-            padding: 20px;
-        }
-
-        .cards {
-            display: flex;
-            gap: 15px;
-        }
-
-        .card {
-            flex: 1;
+        /* TOPBAR */
+        .topbar {
             background: #1e293b;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
             border-bottom: 1px solid #334155;
-            text-align: left;
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 10;
         }
-
-        .chart {
-            margin-top: 30px;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 10px;
+        .topbar-logo { font-size: 18px; font-weight: 700; color: #3b82f6; }
+        .topbar-logo span { color: #f1f5f9; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .logout-btn {
+            color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 600;
+            border: 1px solid #ef4444; padding: 6px 14px; border-radius: 6px;
+            transition: .2s;
         }
+        .logout-btn:hover { background: rgba(239,68,68,.1); }
 
-        .bar {
-            height: 20px;
-            background: #3b82f6;
-            margin: 5px 0;
-            border-radius: 5px;
+        /* LAYOUT */
+        .page { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+
+        /* STATS */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card {
+            background: #1e293b; border: 1px solid #334155; border-radius: 12px;
+            padding: 20px 24px; display: flex; align-items: center; gap: 16px;
         }
+        .stat-icon { font-size: 32px; }
+        .stat-val { font-size: 28px; font-weight: 700; line-height: 1; }
+        .stat-label { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+        .stat-card.blue .stat-val { color: #3b82f6; }
+        .stat-card.green .stat-val { color: #10b981; }
+        .stat-card.yellow .stat-val { color: #f59e0b; }
 
+        /* IC3 PROGRESS */
+        .ic3-banner {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 20px 24px; margin-bottom: 32px;
+            display: flex; align-items: center; justify-content: space-between; gap: 20px;
+        }
+        .ic3-info h3 { font-size: 16px; color: #94a3b8; margin-bottom: 6px; }
+        .ic3-info p { font-size: 13px; color: #64748b; }
+        .progress-wrap { flex: 1; max-width: 320px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
+        .progress-bar { height: 10px; background: #334155; border-radius: 999px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 999px; transition: width .6s ease; }
+        .progress-fill.pass { background: #10b981; }
+        .progress-fill.fail { background: #ef4444; }
+        .progress-fill.none { background: #475569; }
+
+        /* SECTION TITLE */
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #f1f5f9; }
+
+        /* TEST CARDS */
+        .tests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .test-card {
+            background: #1e293b; border: 1px solid #334155; border-radius: 14px;
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: transform .2s, border-color .2s;
+        }
+        .test-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
+        .test-card-img { width: 100%; height: 150px; object-fit: cover; }
+        .test-card-img-placeholder {
+            width: 100%; height: 150px; background: #334155;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px;
+        }
+        .test-card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+        .test-card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .test-card-bio { font-size: 13px; color: #94a3b8; line-height: 1.5; flex: 1; margin-bottom: 16px; }
+        .test-card-meta { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+        .badge { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600; }
+        .badge-blue { background: rgba(59,130,246,.15); color: #3b82f6; }
+        .badge-green { background: rgba(16,185,129,.15); color: #10b981; }
+        .start-btn {
+            display: block; text-align: center; background: #3b82f6; color: white;
+            padding: 11px; border-radius: 8px; text-decoration: none; font-weight: 700;
+            font-size: 14px; transition: background .2s;
+        }
+        .start-btn:hover { background: #2563eb; }
+        .no-tests {
+            background: #1e293b; border: 1px dashed #334155; border-radius: 12px;
+            padding: 40px; text-align: center; color: #64748b;
+        }
+        .no-tests p { font-size: 15px; margin-top: 8px; }
+
+        /* ATTEMPTS TABLE */
+        .attempts-section { margin-bottom: 40px; }
+        .table-wrap { background: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #334155; padding: 12px 16px; text-align: left; font-size: 13px; color: #94a3b8; font-weight: 600; }
+        td { padding: 12px 16px; border-bottom: 1px solid #1e293b; font-size: 14px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,.02); }
+        .pct-cell { display: flex; align-items: center; gap: 10px; }
+        .mini-bar { flex: 1; height: 6px; background: #334155; border-radius: 999px; overflow: hidden; max-width: 80px; }
+        .mini-fill { height: 100%; border-radius: 999px; }
+        .tag-pass { color: #10b981; font-weight: 700; }
+        .tag-fail { color: #ef4444; font-weight: 700; }
+        .empty-row td { text-align: center; color: #64748b; padding: 24px; }
+
+        @media(max-width: 700px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .ic3-banner { flex-direction: column; align-items: flex-start; }
+            .progress-wrap { max-width: 100%; width: 100%; }
+        }
+        @media(max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
-
 <body>
 
-<div class="container">
-
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>📊 IC3 Result Analytics</h1>
-        <a href="/auth/logout" style="color: #ef4444; text-decoration: none; font-weight: bold; border: 1px solid #ef4444; padding: 8px 16px; border-radius: 5px;">Tizimdan chiqish</a>
+<div class="topbar">
+    <div class="topbar-logo">IC3 <span>GS6</span></div>
+    <div class="topbar-right">
+        <a href="/auth/logout" class="logout-btn">Chiqish</a>
     </div>
-
-    <!-- AVAILABLE TESTS -->
-    <div style="margin-bottom: 30px;">
-        <h2>Sizga ruxsat etilgan testlar</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-            {% for test in tests %}
-                <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        {% if test.image_location %}
-                            <img src="/{{ test.image_location }}" alt="{{ test.name }}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 15px;">
-                        {% endif %}
-                        <h3 style="margin: 0 0 10px 0;">{{ test.name }}</h3>
-                        <p style="color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 15px;">{{ test.bio or 'Ta\'rif berilmagan.' }}</p>
-                    </div>
-                    <a href="/test/{{ test.id }}/start" style="display: block; text-align: center; background: #3b82f6; color: white; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: background 0.2s;">Testni boshlash</a>
-                </div>
-            {% else %}
-                <p style="color: #ef4444; font-weight: bold;">Sizda faol shartnomalar yoki testlar mavjud emas. Iltimos, admin bilan bog'laning!</p>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- STATS CARDS -->
-    <div class="cards">
-
-        <div class="card">
-            <h3>Total Attempts</h3>
-            <h2>{{ stats.total_attempts }}</h2>
-        </div>
-
-        <div class="card">
-            <h3>Average Score</h3>
-            <h2>{{ stats.average_score|round(2) }}</h2>
-        </div>
-
-        <div class="card">
-            <h3>Best Score</h3>
-            <h2>{{ stats.best_score }}</h2>
-        </div>
-
-    </div>
-
-    <!-- CHART -->
-    <div class="chart">
-        <h3>Performance Trend</h3>
-
-        {% for a in attempts %}
-            <div>
-                <small>Attempt {{ a.id }} - {{ a.percentage }}%</small>
-                <div class="bar" style="width: {{ a.percentage }}%"></div>
-            </div>
-        {% endfor %}
-    </div>
-
-    <!-- TABLE -->
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Score</th>
-            <th>Correct</th>
-            <th>Wrong</th>
-            <th>%</th>
-            <th>Date</th>
-        </tr>
-
-        {% for a in attempts %}
-        <tr>
-            <td>{{ a.id }}</td>
-            <td>{{ a.score }}</td>
-            <td>{{ a.correct_answers }}</td>
-            <td>{{ a.wrong_answers }}</td>
-            <td>{{ a.percentage }}%</td>
-            <td>{{ a.created_at }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
 </div>
 
+<div class="page">
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat-card blue">
+            <div class="stat-icon">📝</div>
+            <div>
+                <div class="stat-val">{{ stats.total_attempts }}</div>
+                <div class="stat-label">Jami urinishlar</div>
+            </div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-icon">📊</div>
+            <div>
+                <div class="stat-val">{{ stats.average_score | round(1) }}%</div>
+                <div class="stat-label">O'rtacha ball</div>
+            </div>
+        </div>
+        <div class="stat-card yellow">
+            <div class="stat-icon">🏆</div>
+            <div>
+                <div class="stat-val">{{ stats.best_score }}</div>
+                <div class="stat-label">Eng yuqori ball</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IC3 PROGRESS BANNER -->
+    {% set avg = stats.average_score | round(1) %}
+    <div class="ic3-banner">
+        <div class="ic3-info">
+            <h3>IC3 GS6 Tayyorgarlik holati</h3>
+            <p>O'tish bali: <strong>70%</strong> &nbsp;|&nbsp; Sizning o'rtacha: <strong>{{ avg }}%</strong></p>
+        </div>
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span>{{ avg }}%</span>
+                <span>Maqsad: 70%</span>
+            </div>
+            <div class="progress-bar">
+                {% if stats.total_attempts == 0 %}
+                    <div class="progress-fill none" style="width: 0%"></div>
+                {% elif avg >= 70 %}
+                    <div class="progress-fill pass" style="width: {{ [avg, 100] | min }}%"></div>
+                {% else %}
+                    <div class="progress-fill fail" style="width: {{ avg }}%"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- TESTS -->
+    <div class="section-title">🎯 Sizga ruxsat etilgan testlar</div>
+    <div class="tests-grid">
+        {% for test in tests %}
+        <div class="test-card">
+            {% if test.image_location %}
+                <img class="test-card-img" src="/{{ test.image_location }}" alt="{{ test.name }}">
+            {% else %}
+                <div class="test-card-img-placeholder">📝</div>
+            {% endif %}
+            <div class="test-card-body">
+                <div class="test-card-title">{{ test.name }}</div>
+                <div class="test-card-bio">{{ test.bio or "IC3 GS6 sertifikatiga tayyorlanish testi." }}</div>
+                <div class="test-card-meta">
+                    <span class="badge badge-blue">IC3 GS6</span>
+                    <span class="badge badge-green">O'tish: 70%</span>
+                </div>
+                <a href="/test/{{ test.id }}/start" class="start-btn">▶ Testni boshlash</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-tests" style="grid-column: 1/-1;">
+            <div style="font-size:48px;">📭</div>
+            <p style="font-size:16px;font-weight:600;margin-top:12px;">Sizda faol testlar mavjud emas</p>
+            <p style="margin-top:6px;color:#64748b;">Testlarga kirish uchun tarif sotib oling</p>
+            {% if bot_username %}
+            <a href="https://t.me/{{ bot_username }}?start=offers"
+               target="_blank"
+               style="display:inline-flex;align-items:center;gap:10px;margin-top:20px;
+                      background:#3b82f6;color:white;padding:13px 28px;border-radius:10px;
+                      text-decoration:none;font-weight:700;font-size:15px;transition:.2s;"
+               onmouseover="this.style.background='#2563eb'"
+               onmouseout="this.style.background='#3b82f6'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
+                Telegram botda tarif sotib olish
+            </a>
+            {% else %}
+            <p style="margin-top:16px;color:#64748b;">Tarif sotib olish uchun Telegram botga murojaat qiling.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ATTEMPTS -->
+    <div class="attempts-section">
+        <div class="section-title">📋 So'nggi urinishlar</div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ball</th>
+                        <th>To'g'ri</th>
+                        <th>Noto'g'ri</th>
+                        <th>Natija</th>
+                        <th>Sana</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in attempts %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ a.score }}</td>
+                        <td style="color:#10b981;font-weight:600;">{{ a.correct_answers }}</td>
+                        <td style="color:#ef4444;font-weight:600;">{{ a.wrong_answers }}</td>
+                        <td>
+                            <div class="pct-cell">
+                                <div class="mini-bar">
+                                    <div class="mini-fill" style="width:{{ a.percentage }}%;background:{{ '#10b981' if a.percentage >= 70 else '#ef4444' }};"></div>
+                                </div>
+                                <span class="{{ 'tag-pass' if a.percentage >= 70 else 'tag-fail' }}">{{ a.percentage }}%</span>
+                            </div>
+                        </td>
+                        <td style="color:#64748b;font-size:13px;">{{ a.created_at[:16] }}</td>
+                    </tr>
+                    {% else %}
+                    <tr class="empty-row"><td colspan="6">Hali urinishlar yo'q</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
 </body>
 </html>

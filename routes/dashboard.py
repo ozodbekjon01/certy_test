@@ -64,5 +64,17 @@ def dashboard():
             "average_score": stat_row["avg_p"] or 0.0,
             "best_score": stat_row["max_s"] or 0
         }
-        
-    return render_template("dashboard/index.html", tests=tests, attempts=attempts, stats=stats)
+
+        c.execute("SELECT username FROM users WHERE id = ?", (user_id,))
+        row = c.fetchone()
+        if not row:
+            session.clear()
+            return redirect("/auth/login")
+        username = row["username"]
+
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    bot_username = os.environ.get("BOT_USERNAME", "")
+
+    return render_template("dashboard/index.html", tests=tests, attempts=attempts, stats=stats, username=username, bot_username=bot_username)

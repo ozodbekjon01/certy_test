@@ -1,25 +1,26 @@
-{%
-    extends "admin/admin_base.html" %}
-{% block title %}Create Test{% endblock %}
+{% extends "admin/admin_base.html" %}
+{% block title %}{{ "Testni tahrirlash" if test else "Test yaratish" }}{% endblock %}
 {% block content %}
-    <h3>Create Test</h3>
-    <form method="POST" enctype="multipart/form-data">
-        <div>
-            <label for="name">Test Name:</label>
-            <input type="text" id="name" name="name" value="{{ test[1] if test else '' }}" required>
+<h3>{{ "Testni tahrirlash" if test else "Yangi Test Yaratish" }}</h3>
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Test nomi</label>
+        <input type="text" name="name" value="{{ test[1] if test else '' }}" placeholder="Masalan: IC3 GS6 — Computing Fundamentals" required>
+    </div>
+    <div class="form-group">
+        <label>Tavsif</label>
+        <textarea name="bio" rows="3" style="resize:vertical;">{{ test[2] if test else '' }}</textarea>
+    </div>
+    <div class="form-group">
+        <label>Rasm (ixtiyoriy)</label>
+        <input type="file" name="image" accept="image/*">
+        {% if test and test[3] %}
+        <div style="margin-top:10px;">
+            <img src="/{{ test[3] }}" alt="rasm" style="max-width:200px;border-radius:8px;">
         </div>
-        <div>
-            <label for="bio">Test bio:</label>
-            <textarea id="bio" name="bio">{{ test[2] if test else '' }}</textarea>
-        </div>
-        <div>
-            <label for="image_location">Image:</label>
-            <input type="file" id="image" name="image" accept="image/*">
-            {% if test and test[3] %}
-                <p>Current Image:</p>
-                <img src="../../{{ test[3] }}" alt="Test Image" width="150">
-            {% endif %}
-        </div>
-        <button type="submit">Create Test</button>
-    </form>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn">{{ "💾 Saqlash" if test else "✅ Yaratish" }}</button>
+    <a href="/admin/tests" class="btn btn-danger" style="margin-left:10px;">Bekor qilish</a>
+</form>
 {% endblock %}
