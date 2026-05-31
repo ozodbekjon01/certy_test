@@ -6,20 +6,15 @@
     <title>IC3 GS6 — Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        function showDbg() {
+        (function() {
             var wa = window.Telegram && window.Telegram.WebApp;
-            var d = document.createElement('div');
-            d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;font-size:12px;padding:8px;font-family:monospace;word-break:break-all;';
-            if (wa) {
-                try { wa.ready(); wa.expand(); if (typeof wa.requestFullscreen==='function') wa.requestFullscreen(); } catch(e) {}
-                d.textContent = 'WA OK | v=' + wa.version + ' | reqFS=' + (typeof wa.requestFullscreen) + ' | platform=' + wa.platform + ' | isExpanded=' + wa.isExpanded;
-            } else {
-                d.textContent = 'window.Telegram.WebApp = UNDEFINED (Telegram ichida emas yoki script yuklanmadi)';
-            }
-            document.body.appendChild(d);
-        }
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showDbg);
-        else showDbg();
+            if (!wa) return;
+            try {
+                wa.ready();
+                wa.expand();
+                if (typeof wa.requestFullscreen === 'function') wa.requestFullscreen();
+            } catch(e) {}
+        })();
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
