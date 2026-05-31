@@ -6,10 +6,22 @@
     <title>IC3 GS6 — Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-        try { window.Telegram.WebApp.requestFullscreen(); } catch(e) {}
-        try { window.TelegramWebviewProxy && window.TelegramWebviewProxy.postEvent('web_app_request_fullscreen', '{}'); } catch(e) {}
+        // Telegram native bridge - SDK versiyasiga bog'liq emas
+        function tgPostEvent(eventType, eventData) {
+            eventData = eventData || {};
+            try {
+                if (window.TelegramWebviewProxy && window.TelegramWebviewProxy.postEvent) {
+                    window.TelegramWebviewProxy.postEvent(eventType, JSON.stringify(eventData));
+                } else if (window.external && window.external.notify) {
+                    window.external.notify(JSON.stringify({eventType: eventType, eventData: eventData}));
+                } else if (window.parent) {
+                    window.parent.postMessage(JSON.stringify({eventType: eventType, eventData: eventData}), '*');
+                }
+            } catch(e) {}
+        }
+        try { window.Telegram.WebApp.ready(); } catch(e) {}
+        tgPostEvent('web_app_expand');
+        tgPostEvent('web_app_request_fullscreen');
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
