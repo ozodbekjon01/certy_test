@@ -14,9 +14,14 @@
             function goFs() {
                 try { if (typeof wa.requestFullscreen === 'function') wa.requestFullscreen(); } catch(e) {}
             }
-            // SDK tayyor bo'lgach fullscreen
             goFs();
             setTimeout(goFs, 300);
+            window.addEventListener('DOMContentLoaded', function() {
+                var d = document.createElement('div');
+                d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;font-size:12px;padding:8px;font-family:monospace;';
+                d.textContent = 'v=' + wa.version + ' | reqFS=' + (typeof wa.requestFullscreen) + ' | isExpanded=' + wa.isExpanded + ' | platform=' + wa.platform + ' | isFullscreen=' + wa.isFullscreen;
+                document.body.appendChild(d);
+            });
         })();
     </script>
     <style>
